@@ -3,109 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Form Generator</title>
+    <title>Business Form Pro | Philippines</title>
     <style>
         :root {
             --sidebar-width: 260px;
-            --primary: #1a5276; /* Default PO Blue */
+            --primary: #1a5276; 
             --secondary: #2e4053;
             --accent: #27ae60;
             --danger: #c0392b;
             --border: #d5dbdb;
             --bg: #f4f7f6;
+            --text: #2c3e50;
         }
 
+        /* Base Layout */
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
             background-color: var(--bg);
             margin: 0;
-            display: flex; /* Sidebar layout */
-            color: #2c3e50;
+            display: flex;
+            color: var(--text);
         }
 
-        /* --- SIDEBAR STYLES --- */
+        /* --- SIDEBAR PANE --- */
         .sidebar {
             width: var(--sidebar-width);
-            background-color: #2c3e50;
+            background-color: #1c2833;
             height: 100vh;
             color: white;
             position: fixed;
             padding: 20px 0;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s;
+            z-index: 100;
         }
 
-        .sidebar-header {
-            padding: 0 20px 20px;
-            border-bottom: 1px solid #34495e;
-            margin-bottom: 20px;
-        }
-
-        .sidebar-header h2 {
-            font-size: 18px;
-            margin: 0;
-            letter-spacing: 1px;
-            color: #bdc3c7;
-        }
+        .sidebar-header { padding: 0 20px 20px; border-bottom: 1px solid #2c3e50; margin-bottom: 20px; }
+        .sidebar-header h2 { font-size: 14px; color: #85929e; letter-spacing: 2px; }
 
         .nav-item {
-            padding: 15px 20px;
+            padding: 15px 25px;
             cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            border-left: 4px solid transparent;
+            transition: 0.2s;
             font-weight: 500;
+            border-left: 4px solid transparent;
         }
 
-        .nav-item:hover {
-            background: #34495e;
-        }
+        .nav-item:hover { background: #2c3e50; }
+        .nav-item.active { background: #212f3c; border-left-color: #3498db; color: #fff; }
 
-        .nav-item.active {
-            background: #1a5276;
-            border-left: 4px solid #3498db;
-            color: white;
-        }
-
-        /* --- MAIN CONTENT STYLES --- */
+        /* --- MAIN CONTENT AREA --- */
         .main-content {
             margin-left: var(--sidebar-width);
             flex-grow: 1;
             padding: 40px;
-            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .po-wrapper {
-            max-width: 850px;
-            margin: 0 auto;
+        /* THE DOCUMENT (PAPER) */
+        .document-paper {
+            width: 210mm; /* A4 Width */
+            min-height: 297mm;
             background: white;
-            padding: 50px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            border-radius: 4px;
+            padding: 20mm;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            position: relative;
         }
 
-        /* Header & Forms Logic */
-        .header {
+        /* Header Layout */
+        .doc-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            border-bottom: 4px solid var(--primary);
+            border-bottom: 3px solid var(--primary);
             padding-bottom: 20px;
             margin-bottom: 30px;
         }
 
-        .header h1 {
-            margin: 0;
-            font-size: 28px;
-            color: var(--primary);
-            text-transform: uppercase;
+        .doc-header h1 { font-size: 32px; margin: 0; color: var(--primary); text-transform: uppercase; }
+        
+        /* Input Styling for Screen */
+        input, textarea {
+            border: 1px solid #f2f3f4;
+            padding: 8px;
+            font-family: inherit;
+            color: var(--text);
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        .meta-info { text-align: right; }
-        .meta-info div { margin-bottom: 8px; }
+        input:hover, textarea:hover { border-color: var(--border); }
+        input:focus, textarea:focus { outline: none; border-color: var(--primary); background: #fdfefe; }
 
+        /* Grid for addresses */
         .address-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -114,222 +106,236 @@
         }
 
         .address-box h3 {
-            font-size: 13px;
+            font-size: 12px;
             text-transform: uppercase;
             color: #7f8c8d;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #eee;
         }
 
-        textarea {
-            width: 100%; height: 90px; border: 1px solid transparent;
-            font-family: inherit; font-size: 14px; resize: none; padding: 5px;
+        textarea { height: 80px; resize: none; }
+
+        /* Table Styling */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: #f8f9fa; color: var(--secondary); padding: 12px; text-align: left; font-size: 12px; border-bottom: 2px solid var(--primary); }
+        td { padding: 10px; border-bottom: 1px solid #eee; }
+
+        .col-total { text-align: right; font-weight: bold; width: 140px; }
+        .col-qty { width: 70px; }
+        .col-price { width: 120px; }
+
+        /* Footer Totals */
+        .doc-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
         }
 
-        textarea:focus { border: 1px solid var(--border); outline: none; background: #fdfefe; }
-
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th { background-color: var(--primary); color: white; padding: 12px; text-align: left; font-size: 13px; }
-        td { padding: 10px; border-bottom: 1px solid var(--border); }
-
-        .col-qty { width: 80px; }
-        .col-price { width: 150px; }
-        .col-total { width: 150px; font-weight: bold; text-align: right; }
-
-        .footer-grid { display: flex; justify-content: flex-end; margin-top: 30px; }
-        .totals-table { width: 320px; }
-        .total-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f2f3f4; }
-        
-        .grand-total-row {
-            font-size: 18px; font-weight: bold; color: var(--primary);
-            border-bottom: 2px solid var(--primary); padding-top: 15px;
+        .totals-box { width: 280px; }
+        .row-total { display: flex; justify-content: space-between; padding: 8px 0; }
+        .grand-total { 
+            border-top: 2px solid var(--primary); 
+            margin-top: 10px; padding-top: 10px; 
+            font-size: 20px; font-weight: bold; color: var(--primary);
         }
 
-        .controls { text-align: center; margin-top: 30px; }
-        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
-        .btn-add { background: var(--accent); color: white; margin-bottom: 10px; }
-        .btn-print { background: var(--primary); color: white; padding: 15px 40px; font-size: 16px; }
-        .btn-delete { background: var(--danger); color: white; padding: 5px 8px; }
+        /* Action Buttons */
+        .actions { margin-top: 30px; text-align: center; }
+        .btn {
+            padding: 12px 25px; border: none; border-radius: 5px; 
+            cursor: pointer; font-weight: bold; font-size: 14px;
+            margin: 5px; transition: 0.3s;
+        }
+        .btn-add { background: var(--accent); color: white; }
+        .btn-print { background: var(--primary); color: white; padding: 15px 50px; }
+        .btn-del { background: var(--danger); color: white; padding: 5px 10px; font-size: 12px; }
 
-        /* Print Settings */
+        /* --- PRINT OVERRIDES (THE "EDIT FORMAT") --- */
         @media print {
-            .sidebar, .no-print, .controls { display: none !important; }
-            .main-content { margin-left: 0; padding: 0; }
+            @page { size: A4; margin: 0; }
             body { background: white; }
-            .po-wrapper { box-shadow: none; border: none; width: 100%; padding: 10px; }
-            input, textarea { border: none !important; background: transparent !important; color: black !important; }
-            th { background-color: #f2f3f4 !important; color: black !important; border-bottom: 2px solid #000; }
+            .sidebar, .no-print, .actions { display: none !important; }
+            .main-content { margin: 0; padding: 0; width: 100%; }
+            .document-paper { 
+                box-shadow: none; 
+                padding: 15mm; 
+                width: 100%; 
+                margin: 0;
+            }
+            
+            /* Remove input styling to look like plain text */
+            input, textarea { 
+                border: none !important; 
+                padding: 0 !important; 
+                background: transparent !important; 
+                resize: none;
+                overflow: hidden;
+            }
+            
+            th { background: #f2f3f4 !important; -webkit-print-color-adjust: exact; }
+            .doc-header { border-bottom-width: 5px !important; }
         }
     </style>
 </head>
 <body>
 
     <div class="sidebar no-print">
-        <div class="sidebar-header">
-            <h2>FORM TYPES</h2>
-        </div>
-        <div class="nav-item active" onclick="switchForm('Purchase Order', '#1a5276', this)">
-            <span>📋 Purchase Order</span>
-        </div>
-        <div class="nav-item" onclick="switchForm('Sales Invoice', '#27ae60', this)">
-            <span>💰 Sales Invoice</span>
-        </div>
-        <div class="nav-item" onclick="switchForm('Price Quotation', '#8e44ad', this)">
-            <span>🏷️ Price Quotation</span>
-        </div>
-        <div class="nav-item" onclick="switchForm('Delivery Receipt', '#d35400', this)">
-            <span>🚚 Delivery Receipt</span>
-        </div>
+        <div class="sidebar-header"><h2>SYSTEM MENU</h2></div>
+        <div class="nav-item active" onclick="setForm('Purchase Order', '#1a5276', this)">Purchase Order</div>
+        <div class="nav-item" onclick="setForm('Sales Invoice', '#27ae60', this)">Sales Invoice</div>
+        <div class="nav-item" onclick="setForm('Quotation', '#8e44ad', this)">Price Quotation</div>
         
-        <div style="margin-top: auto; padding: 20px; font-size: 12px; color: #7f8c8d;">
-            v1.2 PHP Edition
+        <div style="margin-top: auto; padding: 20px; font-size: 11px; color: #566573;">
+            <p>PH Business Standards v2.0</p>
+            <p>Ready for A4 Printing</p>
         </div>
     </div>
 
     <div class="main-content">
-        <div class="po-wrapper">
-            <header class="header">
+        
+        <div class="document-paper" id="printable-doc">
+            <div class="doc-header">
                 <div>
-                    <h1 id="form-title">Purchase Order</h1>
-                    <p style="margin: 5px 0 0; color: #7f8c8d;" id="form-subtitle">Official Order Document</p>
+                    <h1 id="title-display">Purchase Order</h1>
+                    <input type="text" value="Your Company Name Inc." style="font-weight: bold; font-size: 16px;">
                 </div>
-                <div class="meta-info">
-                    <div>
-                        <label id="number-label">PO No:</label>
-                        <input type="text" value="2026-001" style="width: 130px;">
+                <div style="text-align: right;">
+                    <div style="margin-bottom: 5px;">
+                        <label id="label-id" style="font-weight: bold;">PO #:</label>
+                        <input type="text" value="2026-0001" style="width: 100px; text-align: right;">
                     </div>
                     <div>
-                        <label>Date:</label>
-                        <input type="date" id="po-date" style="width: 140px;">
+                        <label style="font-weight: bold;">Date:</label>
+                        <input type="date" id="doc-date" style="width: 130px; text-align: right;">
                     </div>
                 </div>
-            </header>
+            </div>
 
-            <section class="address-grid">
+            <div class="address-grid">
                 <div class="address-box">
-                    <h3 id="address-left-label">Vendor Info</h3>
-                    <textarea placeholder="Entity details..."></textarea>
+                    <h3 id="label-from">From (Supplier)</h3>
+                    <textarea placeholder="Enter Vendor Details..."></textarea>
                 </div>
                 <div class="address-box">
-                    <h3 id="address-right-label">Delivery Address</h3>
-                    <textarea placeholder="Shipping details..."></textarea>
+                    <h3 id="label-to">Deliver To</h3>
+                    <textarea placeholder="Enter Shipping Details..."></textarea>
                 </div>
-            </section>
+            </div>
 
             <table>
                 <thead>
                     <tr>
-                        <th>Item Description</th>
+                        <th>Description</th>
                         <th class="col-qty">Qty</th>
-                        <th class="col-price">Unit Price (₱)</th>
-                        <th class="col-total">Total (₱)</th>
-                        <th class="col-action no-print"></th>
+                        <th class="col-price">Unit Price</th>
+                        <th class="col-total">Total</th>
+                        <th class="no-print" style="width: 50px;"></th>
                     </tr>
                 </thead>
-                <tbody id="line-items"></tbody>
+                <tbody id="item-rows">
+                    </tbody>
             </table>
 
-            <button class="btn btn-add no-print" onclick="addRow()">+ Add Line Item</button>
+            <button class="btn btn-add no-print" onclick="addRow()">+ Add New Item</button>
 
-            <div class="footer-grid">
-                <div class="totals-table">
-                    <div class="total-row">
+            <div class="doc-footer">
+                <div class="totals-box">
+                    <div class="row-total">
                         <span>Subtotal:</span>
-                        <span id="subtotal-val">₱0.00</span>
+                        <span id="sub-val">₱0.00</span>
                     </div>
-                    <div class="total-row">
-                        <span>VAT Rate (%):</span>
-                        <input type="number" id="tax-rate" value="12" oninput="calculateTotals()" style="width: 60px; text-align: right;">
-                    </div>
-                    <div class="total-row">
-                        <span>VAT Amount:</span>
+                    <div class="row-total">
+                        <span>VAT (12%):</span>
                         <span id="tax-val">₱0.00</span>
                     </div>
-                    <div class="total-row grand-total-row">
-                        <span>GRAND TOTAL:</span>
-                        <span id="grand-total-val">₱0.00</span>
+                    <div class="row-total grand-total">
+                        <span>TOTAL:</span>
+                        <span id="grand-val">₱0.00</span>
                     </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 100px;">
+                <div style="border-top: 1px solid #333; text-align: center; padding-top: 5px; font-size: 12px;">
+                    Prepared By
+                </div>
+                <div style="border-top: 1px solid #333; text-align: center; padding-top: 5px; font-size: 12px;">
+                    Approved By (Authorized Signature)
                 </div>
             </div>
         </div>
 
-        <div class="controls no-print">
-            <button class="btn btn-print" onclick="window.print()">Print or Save as PDF</button>
+        <div class="actions no-print">
+            <button class="btn btn-print" onclick="window.print()">Print or Download PDF</button>
+            <p style="font-size: 12px; color: #7f8c8d; margin-top: 10px;">Ensure "Background Graphics" is enabled in print settings.</p>
         </div>
     </div>
 
     <script>
-        document.getElementById('po-date').valueAsDate = new Date();
+        // Set Today
+        document.getElementById('doc-date').valueAsDate = new Date();
 
-        // Switch between different forms
-        function switchForm(type, color, element) {
-            // Update Active Class
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
-
-            // Update Colors & Titles
-            document.documentElement.style.setProperty('--primary', color);
-            document.getElementById('form-title').innerText = type;
-            
-            // Contextual labeling
-            if(type === 'Sales Invoice') {
-                document.getElementById('form-subtitle').innerText = 'Billing Statement';
-                document.getElementById('number-label').innerText = 'Invoice No:';
-                document.getElementById('address-left-label').innerText = 'Bill To';
-                document.getElementById('address-right-label').innerText = 'Ship To';
-            } else if (type === 'Price Quotation') {
-                document.getElementById('form-subtitle').innerText = 'Formal Price Estimate';
-                document.getElementById('number-label').innerText = 'Quote No:';
-                document.getElementById('address-left-label').innerText = 'Customer Info';
-                document.getElementById('address-right-label').innerText = 'Valid Until';
-            } else {
-                document.getElementById('form-subtitle').innerText = 'Official Order Document';
-                document.getElementById('number-label').innerText = 'PO No:';
-                document.getElementById('address-left-label').innerText = 'Vendor Info';
-                document.getElementById('address-right-label').innerText = 'Delivery Address';
-            }
-        }
-
-        const phpFormatter = new Intl.NumberFormat('en-PH', {
+        const phpFormat = new Intl.NumberFormat('en-PH', {
             style: 'currency', currency: 'PHP', minimumFractionDigits: 2
         });
 
+        function setForm(name, color, el) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+            
+            document.documentElement.style.setProperty('--primary', color);
+            document.getElementById('title-display').innerText = name;
+            
+            // Logic to swap labels
+            const labelId = document.getElementById('label-id');
+            const labelFrom = document.getElementById('label-from');
+            const labelTo = document.getElementById('label-to');
+
+            if(name === 'Sales Invoice') {
+                labelId.innerText = "Invoice #:";
+                labelFrom.innerText = "Bill To:";
+                labelTo.innerText = "Ship To:";
+            } else if(name === 'Quotation') {
+                labelId.innerText = "Quote #:";
+                labelFrom.innerText = "Customer:";
+                labelTo.innerText = "Valid Until:";
+            } else {
+                labelId.innerText = "PO #:";
+                labelFrom.innerText = "From (Supplier):";
+                labelTo.innerText = "Deliver To:";
+            }
+        }
+
         function addRow() {
-            const tbody = document.getElementById('line-items');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><input type="text" placeholder="Item description..." class="input-desc"></td>
-                <td><input type="number" value="1" min="1" class="input-qty" oninput="calculateTotals()"></td>
-                <td><input type="number" value="0.00" step="0.01" class="input-price" oninput="calculateTotals()"></td>
+            const container = document.getElementById('item-rows');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" placeholder="Item/Service description"></td>
+                <td><input type="number" value="1" min="1" oninput="calc()" class="qty-in"></td>
+                <td><input type="number" value="0.00" step="0.01" oninput="calc()" class="price-in"></td>
                 <td class="col-total row-sum">₱0.00</td>
-                <td class="col-action no-print"><button class="btn btn-delete" onclick="removeRow(this)">✕</button></td>
+                <td class="no-print"><button class="btn btn-del" onclick="this.closest('tr').remove(); calc()">✕</button></td>
             `;
-            tbody.appendChild(row);
-            calculateTotals();
+            container.appendChild(tr);
+            calc();
         }
 
-        function removeRow(btn) {
-            btn.closest('tr').remove();
-            calculateTotals();
-        }
-
-        function calculateTotals() {
-            const rows = document.querySelectorAll('#line-items tr');
-            let subtotal = 0;
-            rows.forEach(row => {
-                const qty = parseFloat(row.querySelector('.input-qty').value) || 0;
-                const price = parseFloat(row.querySelector('.input-price').value) || 0;
-                const total = qty * price;
-                row.querySelector('.row-sum').innerText = phpFormatter.format(total);
-                subtotal += total;
+        function calc() {
+            let sub = 0;
+            document.querySelectorAll('#item-rows tr').forEach(row => {
+                const q = row.querySelector('.qty-in').value || 0;
+                const p = row.querySelector('.price-in').value || 0;
+                const total = q * p;
+                row.querySelector('.row-sum').innerText = phpFormat.format(total);
+                sub += total;
             });
-            const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
-            const taxAmount = subtotal * (taxRate / 100);
-            const grandTotal = subtotal + taxAmount;
-            document.getElementById('subtotal-val').innerText = phpFormatter.format(subtotal);
-            document.getElementById('tax-val').innerText = phpFormatter.format(taxAmount);
-            document.getElementById('grand-total-val').innerText = phpFormatter.format(grandTotal);
+
+            const tax = sub * 0.12;
+            const grand = sub + tax;
+
+            document.getElementById('sub-val').innerText = phpFormat.format(sub);
+            document.getElementById('tax-val').innerText = phpFormat.format(tax);
+            document.getElementById('grand-val').innerText = phpFormat.format(grand);
         }
 
         window.onload = addRow;
