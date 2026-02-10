@@ -3,58 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Form Pro | Philippines</title>
+    <title>Flexi-Form Generator</title>
     <style>
         :root {
-            --sidebar-width: 260px;
-            --primary: #1a5276; 
-            --secondary: #2e4053;
-            --accent: #27ae60;
-            --danger: #c0392b;
-            --border: #d5dbdb;
-            --bg: #f4f7f6;
-            --text: #2c3e50;
+            --primary: #1a5276;
+            --bg: #f0f2f5;
+            --sidebar: #1c2833;
+            --print-margin: 20mm;
+            --base-font: 14px;
         }
 
-        /* Base Layout */
         body {
-            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-            background-color: var(--bg);
+            font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
             display: flex;
-            color: var(--text);
+            background: var(--bg);
+            color: #2c3e50;
         }
 
-        /* --- SIDEBAR PANE --- */
+        /* --- SIDEBAR CUSTOMIZER --- */
         .sidebar {
-            width: var(--sidebar-width);
-            background-color: #1c2833;
-            height: 100vh;
+            width: 300px;
+            background: var(--sidebar);
             color: white;
+            height: 100vh;
             position: fixed;
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
             z-index: 100;
         }
 
-        .sidebar-header { padding: 0 20px 20px; border-bottom: 1px solid #2c3e50; margin-bottom: 20px; }
-        .sidebar-header h2 { font-size: 14px; color: #85929e; letter-spacing: 2px; }
-
-        .nav-item {
-            padding: 15px 25px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-weight: 500;
-            border-left: 4px solid transparent;
+        .sidebar h2 { font-size: 16px; color: #3498db; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid #2c3e50; padding-bottom: 10px;}
+        
+        .control-group { margin-bottom: 25px; }
+        .control-group label { display: block; font-size: 12px; margin-bottom: 8px; color: #bdc3c7; }
+        
+        .toggle-btn {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #2c3e50; padding: 10px; border-radius: 5px; cursor: pointer; margin-bottom: 5px;
         }
+        .toggle-btn:hover { background: #34495e; }
 
-        .nav-item:hover { background: #2c3e50; }
-        .nav-item.active { background: #212f3c; border-left-color: #3498db; color: #fff; }
+        input[type="range"] { width: 100%; cursor: pointer; }
 
-        /* --- MAIN CONTENT AREA --- */
+        /* --- MAIN CANVAS --- */
         .main-content {
-            margin-left: var(--sidebar-width);
+            margin-left: 300px;
             flex-grow: 1;
             padding: 40px;
             display: flex;
@@ -62,163 +57,117 @@
             align-items: center;
         }
 
-        /* THE DOCUMENT (PAPER) */
-        .document-paper {
-            width: 210mm; /* A4 Width */
+        /* The Virtual Paper */
+        #printable-area {
+            width: 210mm;
             min-height: 297mm;
             background: white;
-            padding: 20mm;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: var(--print-margin);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
             box-sizing: border-box;
-            position: relative;
+            font-size: var(--base-font);
+            transition: all 0.2s ease;
         }
 
-        /* Header Layout */
-        .doc-header {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 3px solid var(--primary);
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-
-        .doc-header h1 { font-size: 32px; margin: 0; color: var(--primary); text-transform: uppercase; }
+        /* Header Elements */
+        .doc-header { display: flex; justify-content: space-between; margin-bottom: 30px; border-bottom: 3px solid var(--primary); padding-bottom: 20px; }
+        .doc-header h1 { font-size: 2.5em; margin: 0; color: var(--primary); outline: none; }
         
-        /* Input Styling for Screen */
-        input, textarea {
-            border: 1px solid #f2f3f4;
-            padding: 8px;
-            font-family: inherit;
-            color: var(--text);
-            width: 100%;
-            box-sizing: border-box;
-        }
+        .address-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px; }
+        .address-box h3 { font-size: 0.8em; text-transform: uppercase; color: #7f8c8d; margin-bottom: 5px; border-bottom: 1px solid #eee; }
+        
+        textarea, input { border: 1px solid transparent; font-family: inherit; font-size: inherit; width: 100%; padding: 5px; box-sizing: border-box; }
+        textarea:hover, input:hover { border-color: #eee; }
+        textarea { height: 70px; resize: none; }
 
-        input:hover, textarea:hover { border-color: var(--border); }
-        input:focus, textarea:focus { outline: none; border-color: var(--primary); background: #fdfefe; }
-
-        /* Grid for addresses */
-        .address-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .address-box h3 {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: #7f8c8d;
-            margin-bottom: 8px;
-            border-bottom: 1px solid #eee;
-        }
-
-        textarea { height: 80px; resize: none; }
-
-        /* Table Styling */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background: #f8f9fa; color: var(--secondary); padding: 12px; text-align: left; font-size: 12px; border-bottom: 2px solid var(--primary); }
+        /* Table */
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8f9fa; padding: 12px; text-align: left; border-bottom: 2px solid var(--primary); font-size: 0.9em; }
         td { padding: 10px; border-bottom: 1px solid #eee; }
 
-        .col-total { text-align: right; font-weight: bold; width: 140px; }
-        .col-qty { width: 70px; }
-        .col-price { width: 120px; }
+        .hidden { display: none !important; }
 
-        /* Footer Totals */
-        .doc-footer {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 30px;
-        }
+        .totals-section { display: flex; justify-content: flex-end; margin-top: 20px; }
+        .totals-table { width: 250px; }
+        .total-row { display: flex; justify-content: space-between; padding: 8px 0; }
+        .grand-total { border-top: 2px solid var(--primary); font-weight: bold; font-size: 1.2em; color: var(--primary); padding-top: 10px; }
 
-        .totals-box { width: 280px; }
-        .row-total { display: flex; justify-content: space-between; padding: 8px 0; }
-        .grand-total { 
-            border-top: 2px solid var(--primary); 
-            margin-top: 10px; padding-top: 10px; 
-            font-size: 20px; font-weight: bold; color: var(--primary);
-        }
+        .signature-section { margin-top: 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+        .sig-box { border-top: 1px solid #000; text-align: center; padding-top: 5px; font-size: 0.8em; }
 
-        /* Action Buttons */
-        .actions { margin-top: 30px; text-align: center; }
-        .btn {
-            padding: 12px 25px; border: none; border-radius: 5px; 
-            cursor: pointer; font-weight: bold; font-size: 14px;
-            margin: 5px; transition: 0.3s;
-        }
-        .btn-add { background: var(--accent); color: white; }
-        .btn-print { background: var(--primary); color: white; padding: 15px 50px; }
-        .btn-del { background: var(--danger); color: white; padding: 5px 10px; font-size: 12px; }
+        /* Floating Actions */
+        .floating-actions { margin-top: 20px; text-align: center; }
+        .btn { padding: 12px 24px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-print { background: var(--primary); color: white; font-size: 16px; }
+        .btn-add { background: #27ae60; color: white; margin-top: 10px; }
 
-        /* --- PRINT OVERRIDES (THE "EDIT FORMAT") --- */
+        /* --- PRINT ENGINE --- */
         @media print {
-            @page { size: A4; margin: 0; }
             body { background: white; }
-            .sidebar, .no-print, .actions { display: none !important; }
+            .sidebar, .no-print, .btn-add, .floating-actions { display: none !important; }
             .main-content { margin: 0; padding: 0; width: 100%; }
-            .document-paper { 
+            #printable-area { 
                 box-shadow: none; 
-                padding: 15mm; 
                 width: 100%; 
-                margin: 0;
+                margin: 0; 
+                padding: var(--print-margin) !important;
             }
-            
-            /* Remove input styling to look like plain text */
-            input, textarea { 
-                border: none !important; 
-                padding: 0 !important; 
-                background: transparent !important; 
-                resize: none;
-                overflow: hidden;
-            }
-            
-            th { background: #f2f3f4 !important; -webkit-print-color-adjust: exact; }
-            .doc-header { border-bottom-width: 5px !important; }
+            textarea, input { border: none !important; padding: 0 !important; }
+            * { -webkit-print-color-adjust: exact !important; }
         }
     </style>
 </head>
 <body>
 
     <div class="sidebar no-print">
-        <div class="sidebar-header"><h2>SYSTEM MENU</h2></div>
-        <div class="nav-item active" onclick="setForm('Purchase Order', '#1a5276', this)">Purchase Order</div>
-        <div class="nav-item" onclick="setForm('Sales Invoice', '#27ae60', this)">Sales Invoice</div>
-        <div class="nav-item" onclick="setForm('Quotation', '#8e44ad', this)">Price Quotation</div>
-        
-        <div style="margin-top: auto; padding: 20px; font-size: 11px; color: #566573;">
-            <p>PH Business Standards v2.0</p>
-            <p>Ready for A4 Printing</p>
+        <h2>Layout Customizer</h2>
+
+        <div class="control-group">
+            <label>Print Margins (<span id="margin-val">20</span>mm)</label>
+            <input type="range" min="5" max="50" value="20" oninput="updateMargin(this.value)">
+        </div>
+
+        <div class="control-group">
+            <label>Font Size (<span id="font-val">14</span>px)</label>
+            <input type="range" min="10" max="24" value="14" oninput="updateFont(this.value)">
+        </div>
+
+        <div class="control-group">
+            <label>Toggle Sections</label>
+            <div class="toggle-btn" onclick="toggleSection('doc-header')"> Header <span>👁️</span></div>
+            <div class="toggle-btn" onclick="toggleSection('address-grid')"> Address Info <span>👁️</span></div>
+            <div class="toggle-btn" onclick="toggleSection('signature-section')"> Signatures <span>👁️</span></div>
+            <div class="toggle-btn" onclick="toggleColumn('col-price')"> Prices/Tax <span>👁️</span></div>
+        </div>
+
+        <div class="control-group">
+            <label>Theme Color</label>
+            <input type="color" value="#1a5276" oninput="updateColor(this.value)" style="height: 40px; border: none;">
         </div>
     </div>
 
     <div class="main-content">
         
-        <div class="document-paper" id="printable-doc">
-            <div class="doc-header">
+        <div id="printable-area">
+            <div class="doc-header" id="doc-header">
                 <div>
-                    <h1 id="title-display">Purchase Order</h1>
-                    <input type="text" value="Your Company Name Inc." style="font-weight: bold; font-size: 16px;">
+                    <h1 contenteditable="true">Purchase Order</h1>
+                    <input type="text" placeholder="Your Company Name">
                 </div>
                 <div style="text-align: right;">
-                    <div style="margin-bottom: 5px;">
-                        <label id="label-id" style="font-weight: bold;">PO #:</label>
-                        <input type="text" value="2026-0001" style="width: 100px; text-align: right;">
-                    </div>
-                    <div>
-                        <label style="font-weight: bold;">Date:</label>
-                        <input type="date" id="doc-date" style="width: 130px; text-align: right;">
-                    </div>
+                    <p><strong>No:</strong> <input type="text" value="2026-001" style="width: 80px; text-align: right;"></p>
+                    <p><strong>Date:</strong> <input type="date" id="currentDate" style="width: 120px; text-align: right;"></p>
                 </div>
             </div>
 
-            <div class="address-grid">
+            <div class="address-grid" id="address-grid">
                 <div class="address-box">
-                    <h3 id="label-from">From (Supplier)</h3>
-                    <textarea placeholder="Enter Vendor Details..."></textarea>
+                    <h3>Vendor</h3>
+                    <textarea placeholder="Enter Supplier Details..."></textarea>
                 </div>
                 <div class="address-box">
-                    <h3 id="label-to">Deliver To</h3>
-                    <textarea placeholder="Enter Shipping Details..."></textarea>
+                    <h3>Deliver To</h3>
+                    <textarea placeholder="Enter Shipping Address..."></textarea>
                 </div>
             </div>
 
@@ -226,118 +175,107 @@
                 <thead>
                     <tr>
                         <th>Description</th>
-                        <th class="col-qty">Qty</th>
-                        <th class="col-price">Unit Price</th>
-                        <th class="col-total">Total</th>
-                        <th class="no-print" style="width: 50px;"></th>
+                        <th style="width: 60px;">Qty</th>
+                        <th class="col-price" style="width: 120px;">Price (₱)</th>
+                        <th class="col-price" style="width: 120px; text-align: right;">Total</th>
+                        <th class="no-print" style="width: 40px;"></th>
                     </tr>
                 </thead>
-                <tbody id="item-rows">
-                    </tbody>
+                <tbody id="item-rows"></tbody>
             </table>
 
-            <button class="btn btn-add no-print" onclick="addRow()">+ Add New Item</button>
+            <button class="btn btn-add no-print" onclick="addRow()">+ Add Item</button>
 
-            <div class="doc-footer">
-                <div class="totals-box">
-                    <div class="row-total">
+            <div class="totals-section">
+                <div class="totals-table">
+                    <div class="total-row col-price">
                         <span>Subtotal:</span>
-                        <span id="sub-val">₱0.00</span>
+                        <span id="sub-total">₱0.00</span>
                     </div>
-                    <div class="row-total">
+                    <div class="total-row col-price">
                         <span>VAT (12%):</span>
-                        <span id="tax-val">₱0.00</span>
+                        <span id="tax-total">₱0.00</span>
                     </div>
-                    <div class="row-total grand-total">
+                    <div class="total-row grand-total">
                         <span>TOTAL:</span>
-                        <span id="grand-val">₱0.00</span>
+                        <span id="grand-total">₱0.00</span>
                     </div>
                 </div>
             </div>
 
-            <div style="margin-top: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 100px;">
-                <div style="border-top: 1px solid #333; text-align: center; padding-top: 5px; font-size: 12px;">
-                    Prepared By
-                </div>
-                <div style="border-top: 1px solid #333; text-align: center; padding-top: 5px; font-size: 12px;">
-                    Approved By (Authorized Signature)
-                </div>
+            <div class="signature-section" id="signature-section">
+                <div class="sig-box">Issued By</div>
+                <div class="sig-box">Received By</div>
             </div>
         </div>
 
-        <div class="actions no-print">
-            <button class="btn btn-print" onclick="window.print()">Print or Download PDF</button>
-            <p style="font-size: 12px; color: #7f8c8d; margin-top: 10px;">Ensure "Background Graphics" is enabled in print settings.</p>
+        <div class="floating-actions no-print">
+            <button class="btn btn-print" onclick="window.print()">Print This View</button>
         </div>
     </div>
 
     <script>
-        // Set Today
-        document.getElementById('doc-date').valueAsDate = new Date();
+        document.getElementById('currentDate').valueAsDate = new Date();
 
-        const phpFormat = new Intl.NumberFormat('en-PH', {
-            style: 'currency', currency: 'PHP', minimumFractionDigits: 2
-        });
-
-        function setForm(name, color, el) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
-            
-            document.documentElement.style.setProperty('--primary', color);
-            document.getElementById('title-display').innerText = name;
-            
-            // Logic to swap labels
-            const labelId = document.getElementById('label-id');
-            const labelFrom = document.getElementById('label-from');
-            const labelTo = document.getElementById('label-to');
-
-            if(name === 'Sales Invoice') {
-                labelId.innerText = "Invoice #:";
-                labelFrom.innerText = "Bill To:";
-                labelTo.innerText = "Ship To:";
-            } else if(name === 'Quotation') {
-                labelId.innerText = "Quote #:";
-                labelFrom.innerText = "Customer:";
-                labelTo.innerText = "Valid Until:";
-            } else {
-                labelId.innerText = "PO #:";
-                labelFrom.innerText = "From (Supplier):";
-                labelTo.innerText = "Deliver To:";
-            }
+        // --- CUSTOMIZER FUNCTIONS ---
+        function updateMargin(val) {
+            document.getElementById('printable-area').style.padding = val + 'mm';
+            document.getElementById('margin-val').innerText = val;
         }
+
+        function updateFont(val) {
+            document.getElementById('printable-area').style.fontSize = val + 'px';
+            document.getElementById('font-val').innerText = val;
+        }
+
+        function updateColor(val) {
+            document.documentElement.style.setProperty('--primary', val);
+        }
+
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('hidden');
+        }
+
+        function toggleColumn(className) {
+            document.querySelectorAll('.' + className).forEach(el => el.classList.toggle('hidden'));
+        }
+
+        // --- CORE LOGIC ---
+        const phpFormat = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' });
 
         function addRow() {
-            const container = document.getElementById('item-rows');
+            const tbody = document.getElementById('item-rows');
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="text" placeholder="Item/Service description"></td>
-                <td><input type="number" value="1" min="1" oninput="calc()" class="qty-in"></td>
-                <td><input type="number" value="0.00" step="0.01" oninput="calc()" class="price-in"></td>
-                <td class="col-total row-sum">₱0.00</td>
-                <td class="no-print"><button class="btn btn-del" onclick="this.closest('tr').remove(); calc()">✕</button></td>
+                <td><input type="text" placeholder="Item description..."></td>
+                <td><input type="number" value="1" oninput="calculate()" class="in-qty"></td>
+                <td class="col-price"><input type="number" value="0.00" step="0.01" oninput="calculate()" class="in-price"></td>
+                <td class="col-price row-total" style="text-align: right;">₱0.00</td>
+                <td class="no-print"><button onclick="this.closest('tr').remove(); calculate()" style="background:none; border:none; cursor:pointer; color:red;">✕</button></td>
             `;
-            container.appendChild(tr);
-            calc();
+            tbody.appendChild(tr);
+            calculate();
         }
 
-        function calc() {
+        function calculate() {
             let sub = 0;
             document.querySelectorAll('#item-rows tr').forEach(row => {
-                const q = row.querySelector('.qty-in').value || 0;
-                const p = row.querySelector('.price-in').value || 0;
+                const q = row.querySelector('.in-qty').value || 0;
+                const p = row.querySelector('.in-price').value || 0;
                 const total = q * p;
-                row.querySelector('.row-sum').innerText = phpFormat.format(total);
+                row.querySelector('.row-total').innerText = phpFormat.format(total);
                 sub += total;
             });
 
             const tax = sub * 0.12;
             const grand = sub + tax;
 
-            document.getElementById('sub-val').innerText = phpFormat.format(sub);
-            document.getElementById('tax-val').innerText = phpFormat.format(tax);
-            document.getElementById('grand-val').innerText = phpFormat.format(grand);
+            document.getElementById('sub-total').innerText = phpFormat.format(sub);
+            document.getElementById('tax-total').innerText = phpFormat.format(tax);
+            document.getElementById('grand-total').innerText = phpFormat.format(grand);
         }
 
+        // Init
         window.onload = addRow;
     </script>
 </body>
