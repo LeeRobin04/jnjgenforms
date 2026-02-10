@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional PO Generator</title>
+    <title>Purchase Order Generator (PHP)</title>
     <style>
         /* --- CSS STYLING --- */
         :root {
-            --primary: #2c3e50;
-            --secondary: #34495e;
+            --primary: #1a5276;
+            --secondary: #2e4053;
             --accent: #27ae60;
-            --danger: #e74c3c;
-            --border: #dee2e6;
-            --bg: #f8f9fa;
+            --danger: #c0392b;
+            --border: #d5dbdb;
+            --bg: #f4f7f6;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
             margin: 0;
             padding: 40px 20px;
-            color: #333;
+            color: #2c3e50;
         }
 
         .po-wrapper {
@@ -28,11 +28,10 @@
             margin: 0 auto;
             background: white;
             padding: 50px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            border-radius: 4px;
         }
 
-        /* Header Section */
         .header {
             display: flex;
             justify-content: space-between;
@@ -44,26 +43,15 @@
 
         .header h1 {
             margin: 0;
-            font-size: 32px;
+            font-size: 28px;
             color: var(--primary);
-            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        .meta-info {
-            text-align: right;
-        }
+        .meta-info { text-align: right; }
+        .meta-info div { margin-bottom: 8px; }
+        .meta-info label { font-weight: bold; margin-right: 5px; }
 
-        .meta-info div {
-            margin-bottom: 8px;
-        }
-
-        .meta-info label {
-            font-weight: bold;
-            color: var(--secondary);
-            margin-right: 5px;
-        }
-
-        /* Address Section */
         .address-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -72,7 +60,7 @@
         }
 
         .address-box h3 {
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             color: #7f8c8d;
             border-bottom: 1px solid var(--border);
@@ -82,22 +70,20 @@
 
         textarea {
             width: 100%;
-            height: 80px;
+            height: 90px;
             border: 1px solid transparent;
             font-family: inherit;
             font-size: 14px;
             resize: none;
             padding: 5px;
-            transition: border 0.3s;
         }
 
         textarea:focus {
             border: 1px solid var(--border);
-            background: #fffdf0;
             outline: none;
+            background: #fdfefe;
         }
 
-        /* Items Table */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -109,11 +95,11 @@
             color: white;
             padding: 12px;
             text-align: left;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         td {
-            padding: 12px;
+            padding: 10px;
             border-bottom: 1px solid var(--border);
         }
 
@@ -121,31 +107,26 @@
             width: 100%;
             padding: 8px;
             border: 1px solid #eee;
-            border-radius: 4px;
-            box-sizing: border-box;
+            border-radius: 3px;
         }
 
-        .col-qty { width: 100px; }
-        .col-price { width: 130px; }
-        .col-total { width: 130px; font-weight: bold; text-align: right; }
-        .col-action { width: 50px; text-align: center; }
+        .col-qty { width: 80px; }
+        .col-price { width: 150px; }
+        .col-total { width: 150px; font-weight: bold; text-align: right; }
+        .col-action { width: 40px; text-align: center; }
 
-        /* Totals Section */
         .footer-grid {
             display: flex;
             justify-content: flex-end;
             margin-top: 30px;
         }
 
-        .totals-table {
-            width: 300px;
-        }
-
+        .totals-table { width: 320px; }
         .total-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+            border-bottom: 1px solid #f2f3f4;
         }
 
         .grand-total-row {
@@ -153,52 +134,44 @@
             font-weight: bold;
             color: var(--primary);
             border-bottom: 2px solid var(--primary);
+            padding-top: 15px;
         }
 
-        /* Controls */
-        .controls {
-            text-align: center;
-            margin-top: 30px;
-        }
-
+        .controls { text-align: center; margin-top: 30px; }
         .btn {
-            padding: 12px 25px;
+            padding: 10px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-weight: bold;
-            transition: opacity 0.2s;
-            margin: 0 5px;
+            font-weight: 600;
         }
 
-        .btn-add { background: var(--accent); color: white; }
-        .btn-print { background: var(--primary); color: white; font-size: 16px; }
-        .btn-delete { background: var(--danger); color: white; padding: 5px 10px; }
+        .btn-add { background: var(--accent); color: white; margin-bottom: 10px; }
+        .btn-print { background: var(--primary); color: white; padding: 15px 40px; font-size: 16px; }
+        .btn-delete { background: var(--danger); color: white; padding: 5px 8px; }
 
-        .btn:hover { opacity: 0.8; }
-
-        /* Print Overrides */
+        /* Print Settings */
         @media print {
             body { background: white; padding: 0; }
-            .po-wrapper { box-shadow: none; border: none; width: 100%; padding: 20px; }
+            .po-wrapper { box-shadow: none; border: none; width: 100%; padding: 10px; }
             .no-print { display: none !important; }
-            textarea, input { border: none !important; background: transparent !important; }
-            th { background-color: #eee !important; color: black !important; border-bottom: 2px solid #333; }
+            input, textarea { border: none !important; background: transparent !important; color: black !important; }
+            th { background-color: #f2f3f4 !important; color: black !important; border-bottom: 2px solid #000; }
         }
     </style>
 </head>
 <body>
 
-    <div class="po-wrapper" id="po-document">
+    <div class="po-wrapper">
         <header class="header">
             <div>
-                <h1>PURCHASE ORDER</h1>
-                <p style="color: #7f8c8d; margin-top: 5px;">Empowering your business operations.</p>
+                <h1>Purchase Order</h1>
+                <p style="margin: 5px 0 0; color: #7f8c8d;">Official Order Document</p>
             </div>
             <div class="meta-info">
                 <div>
-                    <label>PO Number:</label>
-                    <input type="text" value="PO-2026-001" style="width: 120px;">
+                    <label>PO No:</label>
+                    <input type="text" value="2026-PH-001" style="width: 130px;">
                 </div>
                 <div>
                     <label>Date:</label>
@@ -209,22 +182,22 @@
 
         <section class="address-grid">
             <div class="address-box">
-                <h3>Vendor / Seller</h3>
-                <textarea placeholder="Vendor Name&#10;123 Supply Lane&#10;City, Country"></textarea>
+                <h3>Vendor Info</h3>
+                <textarea placeholder="Supplier Name&#10;Street Address&#10;City, Province, Zip"></textarea>
             </div>
             <div class="address-box">
-                <h3>Ship To / Buyer</h3>
-                <textarea placeholder="Your Company Name&#10;456 Business Ave&#10;City, Country"></textarea>
+                <h3>Delivery Address</h3>
+                <textarea placeholder="Company Name&#10;Contact Person&#10;Shipping Address"></textarea>
             </div>
         </section>
 
         <table>
             <thead>
                 <tr>
-                    <th>Description</th>
+                    <th>Item Description</th>
                     <th class="col-qty">Qty</th>
-                    <th class="col-price">Unit Price ($)</th>
-                    <th class="col-total">Total</th>
+                    <th class="col-price">Unit Price (₱)</th>
+                    <th class="col-total">Total (₱)</th>
                     <th class="col-action no-print"></th>
                 </tr>
             </thead>
@@ -238,48 +211,45 @@
             <div class="totals-table">
                 <div class="total-row">
                     <span>Subtotal:</span>
-                    <span id="subtotal-val">$0.00</span>
+                    <span id="subtotal-val">₱0.00</span>
                 </div>
                 <div class="total-row">
-                    <span>Tax Rate (%):</span>
-                    <input type="number" id="tax-rate" value="10" oninput="calculateTotals()" style="width: 60px; text-align: right;">
+                    <span>VAT Rate (%):</span>
+                    <input type="number" id="tax-rate" value="12" oninput="calculateTotals()" style="width: 60px; text-align: right;">
                 </div>
                 <div class="total-row">
-                    <span>Tax Amount:</span>
-                    <span id="tax-val">$0.00</span>
+                    <span>VAT Amount:</span>
+                    <span id="tax-val">₱0.00</span>
                 </div>
                 <div class="total-row grand-total-row">
                     <span>GRAND TOTAL:</span>
-                    <span id="grand-total-val">$0.00</span>
+                    <span id="grand-total-val">₱0.00</span>
                 </div>
             </div>
         </div>
 
-        <div style="margin-top: 50px; font-size: 12px; color: #95a5a6;">
-            <p><strong>Notes:</strong> Please include the PO number on all invoices and shipping labels.</p>
+        <div style="margin-top: 60px; font-size: 11px; color: #7f8c8d; border-top: 1px solid #eee; padding-top: 10px;">
+            <p><strong>Terms:</strong> Standard 30-day payment term applies upon receipt of invoice. Please specify the PO number on all shipping documents.</p>
         </div>
     </div>
 
     <div class="controls no-print">
-        <button class="btn btn-print" onclick="window.print()">Print or Save as PDF</button>
+        <button class="btn btn-print" onclick="window.print()">Generate PDF / Print PO</button>
     </div>
 
     <script>
-        /* --- JAVASCRIPT LOGIC --- */
-
-        // Set default date to today
+        // Set Today's Date
         document.getElementById('po-date').valueAsDate = new Date();
 
-        // Add a new row to the table
         function addRow() {
             const tbody = document.getElementById('line-items');
             const row = document.createElement('tr');
 
             row.innerHTML = `
-                <td><input type="text" placeholder="Item description or SKU..." class="input-desc"></td>
+                <td><input type="text" placeholder="Enter item name..." class="input-desc"></td>
                 <td><input type="number" value="1" min="1" class="input-qty" oninput="calculateTotals()"></td>
                 <td><input type="number" value="0.00" step="0.01" class="input-price" oninput="calculateTotals()"></td>
-                <td class="col-total row-sum">$0.00</td>
+                <td class="col-total row-sum">₱0.00</td>
                 <td class="col-action no-print">
                     <button class="btn btn-delete" onclick="removeRow(this)">✕</button>
                 </td>
@@ -289,13 +259,18 @@
             calculateTotals();
         }
 
-        // Remove a row
         function removeRow(btn) {
             btn.closest('tr').remove();
             calculateTotals();
         }
 
-        // Calculate all totals
+        // Philippine Currency Formatter
+        const phpFormatter = new Intl.NumberFormat('en-PH', {
+            style: 'currency',
+            currency: 'PHP',
+            minimumFractionDigits: 2
+        });
+
         function calculateTotals() {
             const rows = document.querySelectorAll('#line-items tr');
             let subtotal = 0;
@@ -305,7 +280,7 @@
                 const price = parseFloat(row.querySelector('.input-price').value) || 0;
                 const total = qty * price;
 
-                row.querySelector('.row-sum').innerText = `$${total.toFixed(2)}`;
+                row.querySelector('.row-sum').innerText = phpFormatter.format(total);
                 subtotal += total;
             });
 
@@ -313,12 +288,12 @@
             const taxAmount = subtotal * (taxRate / 100);
             const grandTotal = subtotal + taxAmount;
 
-            document.getElementById('subtotal-val').innerText = `$${subtotal.toFixed(2)}`;
-            document.getElementById('tax-val').innerText = `$${taxAmount.toFixed(2)}`;
-            document.getElementById('grand-total-val').innerText = `$${grandTotal.toFixed(2)}`;
+            document.getElementById('subtotal-val').innerText = phpFormatter.format(subtotal);
+            document.getElementById('tax-val').innerText = phpFormatter.format(taxAmount);
+            document.getElementById('grand-total-val').innerText = phpFormatter.format(grandTotal);
         }
 
-        // Initialize with one empty row
+        // Initialize with one row
         window.onload = addRow;
     </script>
 </body>
