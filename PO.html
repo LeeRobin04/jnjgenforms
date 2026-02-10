@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional PO Generator</title>
+    <style>
+        /* --- CSS STYLING --- */
+        :root {
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --accent: #27ae60;
+            --danger: #e74c3c;
+            --border: #dee2e6;
+            --bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 40px 20px;
+            color: #333;
+        }
+
+        .po-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 4px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        .meta-info {
+            text-align: right;
+        }
+
+        .meta-info div {
+            margin-bottom: 8px;
+        }
+
+        .meta-info label {
+            font-weight: bold;
+            color: var(--secondary);
+            margin-right: 5px;
+        }
+
+        /* Address Section */
+        .address-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .address-box h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #7f8c8d;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            border: 1px solid transparent;
+            font-family: inherit;
+            font-size: 14px;
+            resize: none;
+            padding: 5px;
+            transition: border 0.3s;
+        }
+
+        textarea:focus {
+            border: 1px solid var(--border);
+            background: #fffdf0;
+            outline: none;
+        }
+
+        /* Items Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .col-qty { width: 100px; }
+        .col-price { width: 130px; }
+        .col-total { width: 130px; font-weight: bold; text-align: right; }
+        .col-action { width: 50px; text-align: center; }
+
+        /* Totals Section */
+        .footer-grid {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .totals-table {
+            width: 300px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .grand-total-row {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* Controls */
+        .controls {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+            margin: 0 5px;
+        }
+
+        .btn-add { background: var(--accent); color: white; }
+        .btn-print { background: var(--primary); color: white; font-size: 16px; }
+        .btn-delete { background: var(--danger); color: white; padding: 5px 10px; }
+
+        .btn:hover { opacity: 0.8; }
+
+        /* Print Overrides */
+        @media print {
+            body { background: white; padding: 0; }
+            .po-wrapper { box-shadow: none; border: none; width: 100%; padding: 20px; }
+            .no-print { display: none !important; }
+            textarea, input { border: none !important; background: transparent !important; }
+            th { background-color: #eee !important; color: black !important; border-bottom: 2px solid #333; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="po-wrapper" id="po-document">
+        <header class="header">
+            <div>
+                <h1>PURCHASE ORDER</h1>
+                <p style="color: #7f8c8d; margin-top: 5px;">Empowering your business operations.</p>
+            </div>
+            <div class="meta-info">
+                <div>
+                    <label>PO Number:</label>
+                    <input type="text" value="PO-2026-001" style="width: 120px;">
+                </div>
+                <div>
+                    <label>Date:</label>
+                    <input type="date" id="po-date" style="width: 140px;">
+                </div>
+            </div>
+        </header>
+
+        <section class="address-grid">
+            <div class="address-box">
+                <h3>Vendor / Seller</h3>
+                <textarea placeholder="Vendor Name&#10;123 Supply Lane&#10;City, Country"></textarea>
+            </div>
+            <div class="address-box">
+                <h3>Ship To / Buyer</h3>
+                <textarea placeholder="Your Company Name&#10;456 Business Ave&#10;City, Country"></textarea>
+            </div>
+        </section>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th class="col-qty">Qty</th>
+                    <th class="col-price">Unit Price ($)</th>
+                    <th class="col-total">Total</th>
+                    <th class="col-action no-print"></th>
+                </tr>
+            </thead>
+            <tbody id="line-items">
+                </tbody>
+        </table>
+
+        <button class="btn btn-add no-print" onclick="addRow()">+ Add Line Item</button>
+
+        <div class="footer-grid">
+            <div class="totals-table">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal-val">$0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Tax Rate (%):</span>
+                    <input type="number" id="tax-rate" value="10" oninput="calculateTotals()" style="width: 60px; text-align: right;">
+                </div>
+                <div class="total-row">
+                    <span>Tax Amount:</span>
+                    <span id="tax-val">$0.00</span>
+                </div>
+                <div class="total-row grand-total-row">
+                    <span>GRAND TOTAL:</span>
+                    <span id="grand-total-val">$0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 50px; font-size: 12px; color: #95a5a6;">
+            <p><strong>Notes:</strong> Please include the PO number on all invoices and shipping labels.</p>
+        </div>
+    </div>
+
+    <div class="controls no-print">
+        <button class="btn btn-print" onclick="window.print()">Print or Save as PDF</button>
+    </div>
+
+    <script>
+        /* --- JAVASCRIPT LOGIC --- */
+
+        // Set default date to today
+        document.getElementById('po-date').valueAsDate = new Date();
+
+        // Add a new row to the table
+        function addRow() {
+            const tbody = document.getElementById('line-items');
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td><input type="text" placeholder="Item description or SKU..." class="input-desc"></td>
+                <td><input type="number" value="1" min="1" class="input-qty" oninput="calculateTotals()"></td>
+                <td><input type="number" value="0.00" step="0.01" class="input-price" oninput="calculateTotals()"></td>
+                <td class="col-total row-sum">$0.00</td>
+                <td class="col-action no-print">
+                    <button class="btn btn-delete" onclick="removeRow(this)">✕</button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
+            calculateTotals();
+        }
+
+        // Remove a row
+        function removeRow(btn) {
+            btn.closest('tr').remove();
+            calculateTotals();
+        }
+
+        // Calculate all totals
+        function calculateTotals() {
+            const rows = document.querySelectorAll('#line-items tr');
+            let subtotal = 0;
+
+            rows.forEach(row => {
+                const qty = parseFloat(row.querySelector('.input-qty').value) || 0;
+                const price = parseFloat(row.querySelector('.input-price').value) || 0;
+                const total = qty * price;
+
+                row.querySelector('.row-sum').innerText = `$${total.toFixed(2)}`;
+                subtotal += total;
+            });
+
+            const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
+            const taxAmount = subtotal * (taxRate / 100);
+            const grandTotal = subtotal + taxAmount;
+
+            document.getElementById('subtotal-val').innerText = `$${subtotal.toFixed(2)}`;
+            document.getElementById('tax-val').innerText = `$${taxAmount.toFixed(2)}`;
+            document.getElementById('grand-total-val').innerText = `$${grandTotal.toFixed(2)}`;
+        }
+
+        // Initialize with one empty row
+        window.onload = addRow;
+    </script>
+</body>
+</html>
